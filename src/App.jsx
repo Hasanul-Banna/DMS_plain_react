@@ -26,7 +26,7 @@ function App() {
 
             <Route path="documents" >
               <Route index element={<DocumentList />} />
-              <Route path="add" element={<AddNewDoc />} />
+              {/* <Route path="add" element={<AddNewDoc />} /> */}
             </Route>
 
           </Route>

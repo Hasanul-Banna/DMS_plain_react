@@ -8,11 +8,11 @@ export default function Sidebar({ isSidebarHidden }) {
     {
       link: '/documents',
       icon: <FileText />,
-      label: 'Documents',
-      subItems: [
-        { link: '/documents', icon: <CircleDotDashed size={12} />, label: 'List' },
-        { link: '/documents/add', icon: <CircleDotDashed size={12} />, label: 'Upload New' }
-      ]
+      label: 'Templates',
+      // subItems: [
+      //   { link: '/documents', icon: <CircleDotDashed size={12} />, label: 'List' },
+      //   { link: '/documents/add', icon: <CircleDotDashed size={12} />, label: 'Upload New' }
+      // ]
     },
     { link: '/users', icon: <Users />, label: 'Users' },
     { link: '/roles', icon: <UserCog />, label: 'Role Management' },
