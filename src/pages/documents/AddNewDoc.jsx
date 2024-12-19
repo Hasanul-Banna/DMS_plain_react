@@ -80,7 +80,7 @@ export default function AddNewDoc({ docDetails, isModalOpen, setIsModalOpen, set
               </div>
               <div className="form-control">
                 <label className="label">
-                  {docDetails?.isEditMode ? 'Upload Edited File' : 'Upload a File'} (Only .doc and .docx files are allowed)
+                  <span>{docDetails?.isEditMode ? 'Upload Edited' : 'Upload a'} File * <span className="text-xs text-info"> (Only .doc and .docx files are allowed)</span></span>
                 </label>
                 <FileUploader selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
               </div>

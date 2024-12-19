@@ -119,7 +119,7 @@ export default function DocumentList() {
       <AddNewDoc docDetails={docDetails} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} setRefetchDocs={setRefetchDocs} />
       <div className="card shadow-lg">
         <div className="overflow-x-auto">
-          <table className="table w-full">
+          <table className="table w-full bg-white">
             <thead>
               <tr className="bg-gray-700">
                 <th className="text-white text-center font-bold">ID</th>

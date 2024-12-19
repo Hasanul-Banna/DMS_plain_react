@@ -8,6 +8,7 @@ import AddNewDoc from "./pages/documents/AddNewDoc";
 import Login from "./pages/Login";
 import './App.css';
 import { ToastContainer } from "react-toastify";
+import Users from "./pages/users/index.jsx";
 function App() {
 
   return <AuthProvider>
@@ -19,7 +20,7 @@ function App() {
 
             <Route path="/" element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="users" element={<Dashboard />} />
+            <Route path="users" element={<Users />} />
             <Route path="roles" element={<Dashboard />} />
             <Route path="logs" element={<Dashboard />} />
             <Route path="settings" element={<Dashboard />} />
