@@ -15,7 +15,7 @@ export default function Sidebar({ isSidebarHidden }) {
       // ]
     },
     { link: '/users', icon: <Users />, label: 'Users' },
-    { link: '/roles', icon: <UserCog />, label: 'Role Management' },
+    // { link: '/roles', icon: <UserCog />, label: 'Role Management' },
     { link: '/logs', icon: <LayoutList />, label: 'Logs' },
     {
       link: '/settings', icon: <Settings />, label: 'Settings',
@@ -35,7 +35,7 @@ export default function Sidebar({ isSidebarHidden }) {
           <li className="px-5">
             <div className="flex flex-row items-center h-8 mb-3">
               <div className="text-sm font-light tracking-wide text-gray-200 w-full">
-                <img src={'logo'} width={100} height={100} alt="logo" className='m-auto' />
+                {/* <img src={'logo'} width={100} height={100} alt="logo" className='m-auto' /> */}
               </div>
             </div>
           </li>
