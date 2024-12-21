@@ -12,6 +12,7 @@ import Users from "./pages/users/index.jsx";
 import MicrosoftActiveDirectorySettings from "./pages/settings/index.jsx";
 import LogoSetting from "./pages/settings/LogoSetting.jsx";
 import MyProfile from "./pages/MyProfile.jsx";
+import ApiLogs from "./pages/ApiLogs.jsx";
 function App() {
 
   return <AuthProvider>
@@ -25,7 +26,7 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="users" element={<Users />} />
             <Route path="roles" element={<Dashboard />} />
-            <Route path="logs" element={<Dashboard />} />
+            <Route path="logs" element={<ApiLogs />} />
             <Route path="settings" element={<Dashboard />} />
             <Route path="profile" element={<MyProfile />} />
 
