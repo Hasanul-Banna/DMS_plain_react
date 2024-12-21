@@ -13,7 +13,7 @@ export default function Layout() {
       </div>
       <div className="w-full bg-slate-100 h-screen  transition-all duration-500">
         <Navbar setSidebar={setSidebar} />
-        <div className="p-5 py-2">
+        <div className="p-5 py-2 overflow-auto max-h-[90vh]">
           <Outlet></Outlet>
         </div>
       </div>

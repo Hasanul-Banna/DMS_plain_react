@@ -1,9 +1,10 @@
 import Cookies from 'js-cookie';
 import { Eye, EyeOff } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../hooks/auth';
 import { fireToast } from '../utils/toastify';
+import { AxiosInstance } from '../Auth/Interceptor';
 
 export default function Login() {
   let navigate = useNavigate();
@@ -17,34 +18,56 @@ export default function Login() {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+  const [logo, setLogo] = useState({});
+  useEffect(() => {
+    AxiosInstance.get('http://localhost:5000/api/logo')
+      .then((response) => {
+        console.log(response.data.data);
+        setLogo(response.data.data.length ? response.data.data[0] : {})
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  }, [])
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     console.log('Login attempt with:', username, password);
     if (username === 'admin' && password === 'admin') {
+      setLoading(false);
       Cookies.set('auth_token', 'Valid_token_given!', { expires: 7 });
       fireToast('info', 'Welcome Admin!');
       navigate('/dashboard');
     } else {
-      fireToast('error', 'Invalid credentials! n\ try username : admin ;  password : admin');
-      setUsername('');
-      setPassword('');
+      const payload = { email: username, password }
+      AxiosInstance.post('http://localhost:5000/api/users/get-user-profile', payload)
+        .then((response) => {
+          localStorage.setItem('loggedInUser', JSON.stringify(response.data.data[0]))
+          console.log(response.data.data[0]);
+          Cookies.set('auth_token', 'Valid_token_given!', { expires: 7 });
+          fireToast('info', 'Welcome Admin!');
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 300);
+        })
+        .catch((error) => {
+          console.error(error.message);
+          fireToast('error', 'Invalid credentials!');
+        }).finally(() => {
+          setTimeout(() => {
+            setLoading(false);
+          }, 500);
+        });
     }
-    setLoading(false);
-
-    // try {
-    //   await login(username, password);
-    //   router.push('/documents');
-    // } catch (err) {
-    //   console.log(err);
-    // }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 ">
       <div className="flex items-stretch max-h[500px]">
-        <div className="bg-primary rounded shadow-md w-[450px] flex items-center ">
-          <image src={'logo'} width={180} height={180} alt="logo" className="m-auto" />
+        <div className="bg-teal-700 rounded shadow-md w-[450px] flex items-center ">
+          <div className="m-auto">
+            <img src={`http://localhost:5000/${logo.file_path}`} width={180} height={180} alt="logo" className="m-auto" />
+          </div>
         </div>
         <div className="">
           <form onSubmit={handleLogin} className="max-w-md mx-auto p-10 bg-base-100 shadow-lg rounded-lg">
@@ -90,7 +113,7 @@ export default function Login() {
             </div>
             <button
               type="submit"
-              className={`btn btn-primary w-full mt-6 ${loading ? 'loading' : ''}`}
+              className={`btn btn-primary w-full mt-6`}
               disabled={loading}
             >
               {loading ? 'Logging in...' : 'Login'}

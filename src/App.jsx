@@ -9,6 +9,9 @@ import Login from "./pages/Login";
 import './App.css';
 import { ToastContainer } from "react-toastify";
 import Users from "./pages/users/index.jsx";
+import MicrosoftActiveDirectorySettings from "./pages/settings/index.jsx";
+import LogoSetting from "./pages/settings/LogoSetting.jsx";
+import MyProfile from "./pages/MyProfile.jsx";
 function App() {
 
   return <AuthProvider>
@@ -24,10 +27,15 @@ function App() {
             <Route path="roles" element={<Dashboard />} />
             <Route path="logs" element={<Dashboard />} />
             <Route path="settings" element={<Dashboard />} />
+            <Route path="profile" element={<MyProfile />} />
 
             <Route path="documents" >
               <Route index element={<DocumentList />} />
               {/* <Route path="add" element={<AddNewDoc />} /> */}
+            </Route>
+            <Route path="settings" >
+              <Route index element={<MicrosoftActiveDirectorySettings />} />
+              <Route path="logo" element={<LogoSetting />} />
             </Route>
 
           </Route>

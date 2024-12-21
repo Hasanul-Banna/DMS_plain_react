@@ -20,8 +20,8 @@ export default function Sidebar({ isSidebarHidden }) {
     {
       link: '/settings', icon: <Settings />, label: 'Settings',
       subItems: [
-        { link: '/settings', icon: <CircleDotDashed size={12} />, label: 'Logo' },
-        { link: '/settings', icon: <CircleDotDashed size={12} />, label: 'MS Azure Sync' },
+        { link: '/settings/logo', icon: <CircleDotDashed size={12} />, label: 'Logo' },
+        // { link: '/settings', icon: <CircleDotDashed size={12} />, label: 'MS Azure Sync' },
         { link: '/settings', icon: <CircleDotDashed size={12} />, label: 'MS Active Directory' },
       ]
 
