@@ -3,6 +3,7 @@ import ReactPaginate from 'react-paginate';
 import { AxiosInstance } from '../../Auth/Interceptor';
 import { useAuth } from '../../hooks/auth';
 import AddNewUser from './AddNewUser';
+import { Trash, User } from 'lucide-react';
 export default function Users() {
   const { setUiLoader } = useAuth()
   const [documents, setDocuments] = useState([]);
@@ -89,17 +90,17 @@ export default function Users() {
               {currentDocs.map((doc) => (
                 <tr key={doc._id} className="hover">
                   <td className="text-center">
-                    {doc.imagePath ? <img src={`http://localhost:5000/${doc.imagePath}`} className='h-[66px] rounded-full' /> : ''}
+                    {doc.imagePath ? <img src={`http://localhost:5000/${doc.imagePath}`} className='h-[66px] w-[66px] rounded-full' /> : <User size={40}/>}
                   </td>
                   <td className="text-center">{doc.name}</td>
                   <td className="text-center">{doc.email}</td>
                   <td className="text-center">{doc.role}</td>
                   <td className="text-center">
                     <button
-                      className="btn btn-error btn-sm"
+                      className="btn btn-error btn-sm text-white"
                       onClick={() => removeDocument(doc._id)}
                     >
-                      Remove
+                     <Trash color='white' size={15}></Trash> Remove
                     </button>
                   </td>
                 </tr>
@@ -109,7 +110,10 @@ export default function Users() {
         </div>
       </div>
       {/* Pagination */}
-      <div className="mx-4 my-5 flex justify-end">
+      <div className="mx-4 my-5 flex justify-between items-center">
+        <div className='text-xl font-bold'>
+          Total : {documents.length}
+        </div>
         <ReactPaginate
           previousLabel={"Previous"}
           nextLabel={"Next"}

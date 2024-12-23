@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { AxiosInstance } from "../../Auth/Interceptor";
 
-export default function MicrosoftActiveDirectorySettings() {
+export default function MsExServer() {
   const [formData, setformData] = useState({
     id: '',
     isActivate: false,
@@ -63,42 +63,33 @@ export default function MicrosoftActiveDirectorySettings() {
       });
   }
   return (
-    <form onSubmit={handleSubmit} className="space-y-1  max-w-[600px] mx-auto">
-      <div>
-        <div className="flex gap-4">
-        <div className="card bg-white p-6 w-full">
-            {/* <form onSubmit={handleSubmit} className="space-y-1"> */}
-            <p className="font-bold text-xl bg-gray-200 pl-4 pt-2 rounded-lg border-b pb-2">Microsoft Active Directory Settings</p>
-            {configFields.slice(7, 11).map((config,i) => <div key={i} className="form-control">
-              <label htmlFor="title" className="label">
-                <span className="label-text">{config.name}</span>
-              </label>
-              <input
-                 value={formData[config.key]}
-                 onChange={(e) => setformData(u => { return { ...u, [config.key]: e.target.value } })}
-                className="input input-bordered input-sm"
-                required
-              />
-            </div>)}
-            <div className="form-control">
-              {/* <label htmlFor="title" className="label">
-                <span className="label-text">{'Include Domain'}</span>
-              </label> */}
-              <label className="label cursor-pointer">
-                <span className="label-text">Include Domain</span>
-                <input type="checkbox" className="checkbox" checked={formData.isIncludeDomain} onChange={(e) => setformData(f => { return { ...f, isIncludeDomain: e.target.checked } })} />
-              </label>
-            </div>
-            
-          </div>
-          
+    
+    <form onSubmit={handleSubmit} className="space-y-1 max-w-[600px] mx-auto">
+    <div>
+      <div className="flex gap-4 ">
+        <div className="card bg-white p-6 w-full ">
+          <p className="font-bold text-xl bg-gray-200 pl-4 pt-2 rounded-lg border-b pb-2">Microsoft exchange server</p>
+          {configFields.slice(0, 7).map((config, i) => <div key={i} className="form-control">
+            <label htmlFor="title" className="label">
+              <span className="label-text">{config.name}</span>
+            </label>
+            <input
+              value={formData[config.key]}
+              onChange={(e) => setformData(u => { return { ...u, [config.key]: e.target.value } })}
+              className="input input-bordered input-sm"
+              required
+            />
+          </div>)}
+          {/* </form> */}
         </div>
+
       </div>
-      <div className="flex justify-start">
-        <button className="btn btn-sm text-lg w-full btn-primary text-white mt-4" type="submit">
-          Update
-        </button>
-      </div>
-    </form>
+    </div>
+    <div className="flex justify-start">
+      <button className="btn btn-sm text-lg w-full btn-primary text-white mt-4" type="submit">
+        Update
+      </button>
+    </div>
+  </form>
   )
 }

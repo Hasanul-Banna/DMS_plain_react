@@ -47,9 +47,7 @@ export default function AddNewUser({ isModalOpen, setIsModalOpen, setRefetchDocs
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(userData, selectedFile);
-    if (selectedFile) {
-      uploadUser(userData, selectedFile);
-    }
+    uploadUser(userData, selectedFile);
   };
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
@@ -159,7 +157,6 @@ export default function AddNewUser({ isModalOpen, setIsModalOpen, setRefetchDocs
                 <button
                   className="btn btn-md text-lg w-full btn-primary text-white mt-4"
                   type="submit"
-                  disabled={!selectedFile}
                 >
                   Create
                 </button>

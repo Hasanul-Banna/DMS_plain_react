@@ -13,6 +13,8 @@ import MicrosoftActiveDirectorySettings from "./pages/settings/index.jsx";
 import LogoSetting from "./pages/settings/LogoSetting.jsx";
 import MyProfile from "./pages/MyProfile.jsx";
 import ApiLogs from "./pages/ApiLogs.jsx";
+import MSADSync from "./pages/settings/MSADSync.jsx";
+import MsExServer from "./pages/settings/MsExServer.jsx";
 function App() {
 
   return <AuthProvider>
@@ -37,6 +39,8 @@ function App() {
             <Route path="settings" >
               <Route index element={<MicrosoftActiveDirectorySettings />} />
               <Route path="logo" element={<LogoSetting />} />
+              <Route path="ms-ad-sync" element={<MSADSync />} />
+              <Route path="exchange-server" element={<MsExServer />} />
             </Route>
 
           </Route>

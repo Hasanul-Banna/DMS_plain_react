@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { AxiosInstance } from '../Auth/Interceptor';
 import { useAuth } from '../hooks/auth';
+import { Download, Trash } from 'lucide-react';
+import { fireToast } from '../utils/toastify';
 export default function ApiLogs() {
   const { setUiLoader } = useAuth()
   const [documents, setDocuments] = useState([]);
@@ -17,8 +19,13 @@ export default function ApiLogs() {
   const pageCount = Math.ceil(documents.length / itemsPerPage);
 
   useEffect(() => {
+    FetchAPILogs()
+  }, []);
+
+  const FetchAPILogs = (method) => {
     setUiLoader(true)
-    AxiosInstance.get('http://localhost:5000/api/logs')
+    const url = method ? `http://localhost:5000/api/logs?method=${method}` : 'http://localhost:5000/api/logs'
+    AxiosInstance.get(url)
       .then((response) => {
         console.log(response.data.data);
         setDocuments(response.data.data);
@@ -27,14 +34,9 @@ export default function ApiLogs() {
       })
       .catch((error) => {
         console.error(error.message);
+        setUiLoader(false)
       });
-  }, []);
-  // const createDoc = () => {
-  //   setDocDetails({
-  //     isEditMode: false,
-  //   })
-  //   setIsModalOpen(true)
-  // }
+  }
   const handlePageChange = (selectedPage) => {
     const currentPage = selectedPage.selected
     setCurrentPage(currentPage);
@@ -43,6 +45,17 @@ export default function ApiLogs() {
       currentPage * itemsPerPage,
       (currentPage + 1) * itemsPerPage
     ))
+  };
+  const clearLogs = () => {
+
+    AxiosInstance.get('http://localhost:5000/api/logs/clear')
+      .then((response) => {
+        console.log(response.data.data);
+        FetchAPILogs()
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
   };
   function convertToNorwayTime(isoTimestamp) {
     const date = new Date(isoTimestamp);
@@ -61,10 +74,41 @@ export default function ApiLogs() {
     // Combine date and time
     return `${formattedDate} ${formattedTime}`;
   }
+  function exportArrayAsJSON(array, fileName = "data.json") {
+    if (!Array.isArray(array)) {
+      throw new Error("Input is not a valid array.");
+    }
+  
+    const jsonString = JSON.stringify(array, null, 2); // Format JSON with 2 spaces indentation
+    const blob = new Blob([jsonString], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+  
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+  
+    // Clean up
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+  
+  
+  
+  
   return (
     <div className="p-4">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">API Log List</h1>
+        <div>
+          <button className="btn bg-[red] text-white btn-sm mr-2" onClick={() => { clearLogs() }} >
+            <Trash size={15}></Trash> Clear Logs
+          </button>
+          <button className="btn btn-primary text-white btn-sm" onClick={() => { exportArrayAsJSON(documents, "Logs.json"); }} >
+            <Download size={15}></Download> Export Logs
+          </button>
+        </div>
       </div>
       <div className="card shadow-lg">
         <div className="overflow-x-auto">
@@ -72,7 +116,23 @@ export default function ApiLogs() {
             <thead>
               <tr className="bg-gray-700">
                 <th className="text-white text-center font-bold">URL</th>
-                <th className="text-white text-center font-bold">Method</th>
+                <th className="text-white text-center font-bold" >
+                  <details className="dropdown">
+                    <summary className="cursor-pointer">Method</summary>
+                    <ul className="menu dropdown-content bg-gray-900 rounded-box z-[1] w-32 p-2 shadow mt-3">
+                      <li><a className='text-xs font-semibold' onClick={() => {
+                        FetchAPILogs()
+                      }}>All</a></li>
+                      <li><a className='text-xs font-semibold' onClick={() => {
+                        FetchAPILogs('get'); fireToast("success", "Table Filtered by GET method")
+                      }}>GET</a></li>
+                      <li><a className='text-xs font-semibold' onClick={() => {
+                        FetchAPILogs('post'); fireToast("success", "Table Filtered by POST method")
+                      }}>POST</a></li>
+                    </ul>
+                  </details>
+                  {/* Method */}
+                </th>
                 <th className="text-white text-center font-bold">Status Code</th>
                 <th className="text-white text-center font-bold">Time-Stamp (Norway)</th>
                 <th className="text-white text-center font-bold">Type</th>
@@ -95,7 +155,10 @@ export default function ApiLogs() {
         </div>
       </div>
       {/* Pagination */}
-      <div className="mx-4 my-5 flex justify-end">
+      <div className="mx-4 my-5 flex justify-between items-center">
+        <div className='text-xl font-bold'>
+          Total : {documents.length}
+        </div>
         <ReactPaginate
           previousLabel={"Previous"}
           nextLabel={"Next"}

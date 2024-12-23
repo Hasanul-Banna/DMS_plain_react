@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 export default function Navbar({ setSidebar }) {
   const { isUiLoading } = useAuth()
-  const [data, setData] = useState({ imagePath: '' })
+  const [data, setData] = useState({ imagePath: '',name:'' })
   useEffect(() => {
     setData(JSON.parse(localStorage.getItem('loggedInUser')) || { imagePath: '' });
   }, [])
@@ -32,10 +32,10 @@ export default function Navbar({ setSidebar }) {
             </NavLink>
           </button> */}
           <details className="dropdown dropdown-end">
-            <summary className="btn mx-1 p-0 rounded-full w-[50px] h-[50px">
-              {data.imagePath ? <img src={`http://localhost:5000/${data?.imagePath || ''}`} className='h-[50px] rounded-full' /> :
-                <User size={15} />
-              }
+            <summary className="btn pl-0 mx-1 rounded-full bg-transparent border-none shadow-none h-[52px] ">
+              {data.imagePath ? <img src={`http://localhost:5000/${data?.imagePath || ''}`} className='h-[50px] w-[50px] rounded-full' /> :
+                <User size={20} /> 
+              } <span className="text-lg font-bold">{data.name || data.email}</span>
             </summary>
             <ul className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow mt-4">
               <li>

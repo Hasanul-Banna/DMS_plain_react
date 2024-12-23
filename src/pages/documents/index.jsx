@@ -3,6 +3,7 @@ import { AxiosInstance } from '../../Auth/Interceptor';
 import AddNewDoc from './AddNewDoc';
 import { useAuth } from '../../hooks/auth';
 import ReactPaginate from 'react-paginate';
+import { Download, Edit, Trash } from 'lucide-react';
 
 export default function DocumentList() {
   // const navigate = useNavigate()
@@ -133,18 +134,18 @@ export default function DocumentList() {
                   <td className="text-center">{doc._id}</td>
                   <td className="text-center">{doc.name}</td>
                   <td className="text-center">
-                    <button className="btn btn-outline btn-sm mr-2" onClick={() => editDocument(doc)}>Update</button>
+                    <button className="btn btn-outline btn-sm mr-2" onClick={() => editDocument(doc)}> <Edit size={15}></Edit> Update</button>
                     <button
                       className="btn btn-outline btn-sm mr-2"
                       onClick={() => downloadDocx(doc.name, `http://localhost:5000/${doc.file_path}`)}
                     >
-                      Download
+                     <Download size={15}></Download> Download
                     </button>
                     <button
-                      className="btn btn-error btn-sm"
+                      className="btn btn-error btn-sm text-white"
                       onClick={() => removeDocument(doc._id)}
                     >
-                      Remove
+                     <Trash color='white' size={15}></Trash> Remove
                     </button>
                   </td>
                 </tr>
@@ -154,7 +155,10 @@ export default function DocumentList() {
         </div>
       </div>
       {/* Pagination */}
-      <div className="mx-4 my-5 flex justify-end">
+      <div className="mx-4 my-5 flex justify-between items-center">
+        <div className='text-xl font-bold'>
+          Total : {documents.length}
+        </div>
         <ReactPaginate
           previousLabel={"Previous"}
           nextLabel={"Next"}

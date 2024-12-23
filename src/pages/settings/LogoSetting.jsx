@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { fireToast } from '../../utils/toastify';
 import { AxiosInstance } from '../../Auth/Interceptor';
 
@@ -66,7 +66,7 @@ export default function LogoSetting() {
     uploadDocument(selectedFile)
   }
   return (
-    <div className="card bg-white p-6  w-full">
+    <div className="card bg-white p-6  w-full  max-w-[600px] mx-auto">
       <div className="m-auto">
         <img src={`http://localhost:5000/${logo.file_path}`} width={180} height={180} alt="logo" className="m-auto" />
       </div>

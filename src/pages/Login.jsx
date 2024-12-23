@@ -8,7 +8,7 @@ import { AxiosInstance } from '../Auth/Interceptor';
 
 export default function Login() {
   let navigate = useNavigate();
-  const isAuthenticated = useAuth()
+  const {setIsAuthenticated} = useAuth()
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -22,7 +22,8 @@ export default function Login() {
   useEffect(() => {
     AxiosInstance.get('http://localhost:5000/api/logo')
       .then((response) => {
-        console.log(response.data.data);
+        console.log(response.data.data[0]);
+        localStorage.setItem('logo', JSON.stringify(response.data?.data[0]?.file_path))
         setLogo(response.data.data.length ? response.data.data[0] : {})
       })
       .catch((error) => {
@@ -34,14 +35,17 @@ export default function Login() {
     setLoading(true);
     console.log('Login attempt with:', username, password);
     if (username === 'admin' && password === 'admin') {
+      setIsAuthenticated(true);
       setLoading(false);
       Cookies.set('auth_token', 'Valid_token_given!', { expires: 7 });
+      localStorage.setItem('loggedInUser', JSON.stringify({name:username}))
       fireToast('info', 'Welcome Admin!');
       navigate('/dashboard');
     } else {
       const payload = { email: username, password }
       AxiosInstance.post('http://localhost:5000/api/users/get-user-profile', payload)
         .then((response) => {
+          setIsAuthenticated(true);
           localStorage.setItem('loggedInUser', JSON.stringify(response.data.data[0]))
           console.log(response.data.data[0]);
           Cookies.set('auth_token', 'Valid_token_given!', { expires: 7 });
