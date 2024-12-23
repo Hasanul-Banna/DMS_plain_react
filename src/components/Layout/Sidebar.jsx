@@ -40,13 +40,13 @@ export default function Sidebar({ isSidebarHidden }) {
       {/* Sidebar content */}
       <div className="overflow-y-auto overflow-x-hidden flex-grow">
         <ul className="flex flex-col py-4 space-y-1">
-          <li className="px-5">
+          {/* <li className="px-5">
             <div className="flex flex-row items-center h-8 mb-2 mt-2">
               <div className="text-sm font-light tracking-wide text-gray-200 w-full">
                 <img src={`http://localhost:5000/${logo}`}  alt="logo" className='m-auto max-h-[50px]' />
               </div>
             </div>
-          </li>
+          </li> */}
           {sidebarItems.map((item, index) => (
             <SidebarItem key={index} link={item.link} icon={item.icon} label={item.label} subItems={item.subItems} />
           ))}

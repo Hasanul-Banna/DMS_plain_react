@@ -78,25 +78,25 @@ export default function ApiLogs() {
     if (!Array.isArray(array)) {
       throw new Error("Input is not a valid array.");
     }
-  
+
     const jsonString = JSON.stringify(array, null, 2); // Format JSON with 2 spaces indentation
     const blob = new Blob([jsonString], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-  
+
     const a = document.createElement("a");
     a.href = url;
     a.download = fileName;
     document.body.appendChild(a);
     a.click();
-  
+
     // Clean up
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
-  
-  
-  
-  
+
+
+
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
@@ -136,7 +136,8 @@ export default function ApiLogs() {
                 <th className="text-white text-center font-bold">Status Code</th>
                 <th className="text-white text-center font-bold">Time-Stamp (Norway)</th>
                 <th className="text-white text-center font-bold">Type</th>
-                <th className="text-white text-center font-bold">Response Message</th>
+                <th className="max-w-[300px] text-white text-center font-bold">Request Body</th>
+                <th className="max-w-[300px] text-white text-center font-bold">Response Message</th>
               </tr>
             </thead>
             <tbody>
@@ -147,7 +148,8 @@ export default function ApiLogs() {
                   <td className="text-center">{doc.statusCode}</td>
                   <td className="text-center">{convertToNorwayTime(doc.timestamp)}</td>
                   <td className="text-center">{(doc.responseBody.success ? 'Success' : 'Failed')}</td>
-                  <td className="text-center">{(doc.responseBody.msg)}</td>
+                  <td className="max-w-[300px] break-words text-center">{(JSON.stringify(doc?.requestBody) || null)}</td>
+                  <td className="max-w-[300px] break-words text-center">{(doc.responseBody.msg)}</td>
                 </tr>
               ))}
             </tbody>
