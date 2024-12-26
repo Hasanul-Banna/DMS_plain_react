@@ -32,7 +32,7 @@ export default function Sidebar({ isSidebarHidden }) {
   ];
   const [logo, setLogo] = useState({});
   useEffect(() => {
-    setLogo(JSON.parse(localStorage.getItem('logo')))
+    // setLogo(JSON.parse(localStorage.getItem('logo')))
 
   }, [])
   return (

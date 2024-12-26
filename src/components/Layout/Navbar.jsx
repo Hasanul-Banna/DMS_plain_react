@@ -5,7 +5,10 @@ import { useEffect, useState } from "react";
 
 export default function Navbar({ setSidebar }) {
   const { isUiLoading } = useAuth()
-  const [data, setData] = useState({ imagePath: '',name:'' })
+  const [data, setData] = useState({ imagePath: '', name: '' })
+  const [isOpen, setIsOpen] = useState(false);
+
+  const closeDropdown = () => setIsOpen(false);
   useEffect(() => {
     setData(JSON.parse(localStorage.getItem('loggedInUser')) || { imagePath: '' });
   }, [])
@@ -25,33 +28,23 @@ export default function Navbar({ setSidebar }) {
         </div>
 
         <div className="navbar-end">
-          {/* <button className="btn btn-sm">
-            <NavLink to="/login" className="flex gap-2 justify-center items-center" onClick={logout}>
-              <LogOut size={15} />
-              <span>Logout</span>
-            </NavLink>
-          </button> */}
-          <details className="dropdown dropdown-end">
-            <summary className="btn pl-0 mx-1 rounded-full bg-transparent border-none shadow-none h-[52px] ">
-              {data.imagePath ? <img src={`http://localhost:5000/${data?.imagePath || ''}`} className='h-[50px] w-[50px] rounded-full' /> :
-                <User size={20} /> 
+          <div className="dropdown dropdown-end">
+            <div tabIndex={0} role="button" className="btn h-[50px] pl-0" onClick={() => setIsOpen(true)}>
+              {data.imagePath ? <img src={`http://localhost:5000/${data?.imagePath || ''}`} className='h-[50px] w-[50px] rounded-md' /> :
+                <User size={20} className="ml-4"/>
               } <span className="text-lg font-bold">{data.name || data.email}</span>
-            </summary>
-            <ul className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow mt-4">
-              <li>
-                <NavLink to="/profile" className="flex gap-2">
-                  <User size={15} />
-                  <span>My Profile</span>
-                </NavLink>
-              </li>
-              <li>
-                <NavLink to="/login" className="flex gap-2" onClick={logout}>
-                  <LogOut size={15} />
-                  <span>Logout</span>
-                </NavLink>
-              </li>
-            </ul>
-          </details>
+            </div>
+            {isOpen && <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow" onClick={closeDropdown}>
+              <li><NavLink to="/profile" className="flex gap-2">
+                <User size={15} />
+                <span>My Profile</span>
+              </NavLink></li>
+              <li><NavLink to="/login" className="flex gap-2" onClick={logout}>
+                <LogOut size={15} />
+                <span>Logout</span>
+              </NavLink></li>
+            </ul>}
+          </div>
         </div>
       </div>
       {isUiLoading && <div className="w-100 mt-[-14px] z-[1] relative ">

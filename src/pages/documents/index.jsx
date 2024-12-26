@@ -14,7 +14,7 @@ export default function DocumentList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refresh, setRefetchDocs] = useState(false);
 
-  const itemsPerPage = 4; // Number of items per page
+  const itemsPerPage = 10 // Number of items per page
   const [currentPage, setCurrentPage] = useState(0);
 
   // Get the documents for the current page
@@ -114,7 +114,7 @@ export default function DocumentList() {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">Document List</h1>
+        <h1 className="text-2xl font-bold">Template List</h1>
         <button className="btn btn-primary text-white" onClick={createDoc}>Upload New Document</button>
       </div>
       <AddNewDoc docDetails={docDetails} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} setRefetchDocs={setRefetchDocs} />

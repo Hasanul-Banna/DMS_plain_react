@@ -12,7 +12,7 @@ export default function Users() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refresh, setRefetchDocs] = useState(false);
 
-  const itemsPerPage = 4; // Number of items per page
+  const itemsPerPage = 10 // Number of items per page
   const [currentPage, setCurrentPage] = useState(0);
 
   // Get the documents for the current page
