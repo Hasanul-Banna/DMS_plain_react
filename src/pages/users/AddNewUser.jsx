@@ -9,6 +9,7 @@ export default function AddNewUser({ isModalOpen, setIsModalOpen, setRefetchDocs
     email: '',
     password: '', // Note: Hash passwords in a real application
     role: 'user',
+    willBeAffected: true,
   })
   const uploadUser = async (userData, file) => {
     try {
@@ -153,6 +154,12 @@ export default function AddNewUser({ isModalOpen, setIsModalOpen, setRefetchDocs
                   onChange={handleFileChange}
                 />
               </div>
+              <div className="form-control">
+              <label className="label cursor-pointer">
+                <span className="label-text">Will be affected by Sync ?</span>
+                <input type="checkbox" checked={userData.willBeAffected} className="checkbox" onChange={(e) => setUserData(f => { return { ...f, willBeAffected: e.target.checked } })} />
+              </label>
+            </div>
               <div className="flex justify-start">
                 <button
                   className="btn btn-md text-lg w-full btn-primary text-white mt-4"

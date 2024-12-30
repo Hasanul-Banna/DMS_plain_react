@@ -72,8 +72,8 @@ export default function Users() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">User List</h1>
         <div className="flex gap-4">
-        <button className="btn btn-primary text-white" onClick={createDoc}>Add New User</button>
-        <button className="btn btn-primary bg-black text-white" onClick={createDoc}>Sync Now!</button>
+          <button className="btn btn-primary text-white" onClick={createDoc}>Add New User</button>
+          <button className="btn btn-primary bg-black text-white" onClick={createDoc}>Sync Now!</button>
 
         </div>
       </div>
@@ -83,34 +83,68 @@ export default function Users() {
           <table className="table w-full bg-white">
             <thead>
               <tr className="bg-gray-700">
-                <th className="text-white text-center font-bold">Avatar</th>
-                <th className="text-white text-center font-bold">Name</th>
-                <th className="text-white text-center font-bold">Email</th>
-                <th className="text-white text-center font-bold">Role</th>
-                <th className="text-white text-center font-bold">Action</th>
+                <th className="text-white text-center font-bold max-w-[15px] break-words">
+                  Avatar
+                </th>
+                <th className="text-white text-center font-bold max-w-[15px] break-words">
+                  Name
+                </th>
+                <th className="text-white text-center font-bold max-w-[50px] break-words">
+                  Email
+                </th>
+                <th className="text-white text-center font-bold max-w-[15px] break-words">
+                  Role
+                </th>
+                <th className="text-white text-center font-bold max-w-[15px] break-words">
+                  Type
+                </th>
+                <th className="text-white text-center font-bold max-w-[15px] break-words">
+                  Status
+                </th>
+                <th className="text-white text-center font-bold max-w-[15px] break-words">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody>
               {currentDocs.map((doc) => (
                 <tr key={doc._id} className="hover">
-                  <td className="text-center">
-                    {doc.imagePath ? <img src={`http://localhost:5000/${doc.imagePath}`} className='h-[66px] w-[66px] rounded-full' /> : <User size={40}/>}
+                  <td className="text-center max-w-[15px] break-words mx-auto">
+                    {doc.imagePath ? (
+                      <img
+                        src={`http://localhost:5000/${doc.imagePath}`}
+                        className="h-[66px] w-[66px] rounded-full mx-auto"
+                      />
+                    ) : (
+                      <User size={40} className='mx-auto'/>
+                    )}
                   </td>
-                  <td className="text-center">{doc.name}</td>
-                  <td className="text-center">{doc.email}</td>
-                  <td className="text-center">{doc.role}</td>
-                  <td className="text-center">
+                  <td className="text-center max-w-[15px] break-words">{doc.name}</td>
+                  <td className="text-center max-w-[50px] break-words">{doc.email}</td>
+                  <td className="text-center max-w-[15px] break-words">
+                    {doc.role.toUpperCase()}
+                  </td>
+                  <td className="text-center max-w-[15px] break-words">
+                    {doc.isMsadUser ? "Azure" : "Normal"}
+                  </td>
+                  <td className="text-center max-w-[15px] break-words">
+                    <div className={`p-1 rounded-md text-white ${doc.isActive ? "bg-emerald-500" : "bg-red-700"}`} >
+                      {doc.isActive ? "Active" : "Inactive"}
+                    </div>
+                  </td>
+                  <td className="text-center max-w-[15px] break-words">
                     <button
                       className="btn btn-error btn-sm text-white"
                       onClick={() => removeDocument(doc._id)}
                     >
-                     <Trash color='white' size={15}></Trash> Remove
+                      <Trash color="white" size={15}></Trash>
                     </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+
         </div>
       </div>
       {/* Pagination */}
