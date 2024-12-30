@@ -22,7 +22,7 @@ export default function Sidebar({ isSidebarHidden }) {
       link: '/settings', icon: <Settings />, label: 'Settings',
       subItems: [
         { link: '/settings/logo', icon: <CircleDotDashed size={12} />, label: 'Logo' },
-        { link: '/settings/template-category', icon: <CircleDotDashed size={12} />, label: 'Template Category' },
+        // { link: '/settings/template-category', icon: <CircleDotDashed size={12} />, label: 'Template Category' },
         // { link: '/settings', icon: <CircleDotDashed size={12} />, label: 'MS Azure Sync' },
         { link: '/settings', icon: <CircleDotDashed size={12} />, label: 'MS Active Directory' },
         { link: '/settings/exchange-server', icon: <CircleDotDashed size={12} />, label: 'MS Exchange Server' },

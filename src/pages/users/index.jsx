@@ -3,7 +3,7 @@ import ReactPaginate from 'react-paginate';
 import { AxiosInstance } from '../../Auth/Interceptor';
 import { useAuth } from '../../hooks/auth';
 import AddNewUser from './AddNewUser';
-import { Trash, User } from 'lucide-react';
+import { ChevronDown, ListFilter, Trash, User } from 'lucide-react';
 export default function Users() {
   const { setUiLoader } = useAuth()
   const [documents, setDocuments] = useState([]);
@@ -17,7 +17,10 @@ export default function Users() {
 
   // Get the documents for the current page
   const pageCount = Math.ceil(documents.length / itemsPerPage);
-
+  const [isStatusFIlterOpen, setIsStatusFIlterOpen] = useState(false);
+  const [isTypeFilterOpen, setTypeFilter] = useState(false);
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filterType, setFilterType] = useState('');
   useEffect(() => {
     setUiLoader(true)
     AxiosInstance.get('http://localhost:5000/api/users')
@@ -70,7 +73,13 @@ export default function Users() {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">User List</h1>
+        <div className="flex items-center gap-2">
+          {/* <h1 className="text-2xl font-bold">API Log List</h1> */}
+          <h1 className="text-2xl font-bold">User List</h1>
+          (<p> Status <ListFilter size={14} className='inline' /> :  {filterStatus.toUpperCase() || 'All'} </p>  |
+          <p> User Type <ListFilter size={14} className='inline' /> :  {filterType.toUpperCase() || 'All'} </p>)
+        </div>
+        <div></div>
         <div className="flex gap-4">
           <button className="btn btn-primary text-white" onClick={createDoc}>Add New User</button>
           <button className="btn btn-primary bg-black text-white" onClick={createDoc}>Sync Now!</button>
@@ -96,10 +105,24 @@ export default function Users() {
                   Role
                 </th>
                 <th className="text-white text-center font-bold max-w-[15px] break-words">
-                  Type
+                  <div className="dropdown">
+                    <div tabIndex={0} role="" className="cursor-pointer" onClick={() => setTypeFilter(true)}> <ChevronDown size={14} strokeWidth={4} className='inline' /> Type</div>
+                    {isTypeFilterOpen && <ul tabIndex={0} className="menu dropdown-content bg-gray-900 rounded-md z-[1] w-32 p-0 shadow mt-3 mx-w-[80px]" onClick={() => setTypeFilter(false)}>
+                      <li><a className='text-xs font-semibold px-4 py-2' onClick={() => { setFilterType('') }}>All</a></li>
+                      <li><a className='text-xs font-semibold px-4 py-2' onClick={() => { setFilterType('Azure') }}>Azure</a></li>
+                      <li><a className='text-xs font-semibold px-4 py-2' onClick={() => { setFilterType('App-User') }}>App user</a></li>
+                    </ul>}
+                  </div>
                 </th>
                 <th className="text-white text-center font-bold max-w-[15px] break-words">
-                  Status
+                  <div className="dropdown">
+                    <div tabIndex={0} role="" className="cursor-pointer" onClick={() => setIsStatusFIlterOpen(true)}> <ChevronDown size={14} strokeWidth={4} className='inline' /> Status</div>
+                    {isStatusFIlterOpen && <ul tabIndex={0} className="menu dropdown-content bg-gray-900 rounded-md z-[1] w-32 p-0 shadow mt-3 mx-w-[80px]" onClick={() => setIsStatusFIlterOpen(false)}>
+                      <li><a className='text-xs font-semibold px-4 py-2' onClick={() => { setFilterStatus('') }}>All</a></li>
+                      <li><a className='text-xs font-semibold px-4 py-2' onClick={() => { setFilterStatus('Active') }}>Active</a></li>
+                      <li><a className='text-xs font-semibold px-4 py-2' onClick={() => { setFilterStatus('Inactive') }}>Inactive</a></li>
+                    </ul>}
+                  </div>
                 </th>
                 <th className="text-white text-center font-bold max-w-[15px] break-words">
                   Action
@@ -116,7 +139,7 @@ export default function Users() {
                         className="h-[66px] w-[66px] rounded-full mx-auto"
                       />
                     ) : (
-                      <User size={40} className='mx-auto'/>
+                      <User size={40} className='mx-auto' />
                     )}
                   </td>
                   <td className="text-center max-w-[15px] break-words">{doc.name}</td>
@@ -125,7 +148,7 @@ export default function Users() {
                     {doc.role.toUpperCase()}
                   </td>
                   <td className="text-center max-w-[15px] break-words">
-                    {doc.isMsadUser ? "Azure" : "Normal"}
+                    {doc.isMsadUser ? "Azure" : "App user"}
                   </td>
                   <td className="text-center max-w-[15px] break-words">
                     <div className={`p-1 rounded-md text-white ${doc.isActive ? "bg-emerald-500" : "bg-red-700"}`} >
@@ -134,6 +157,7 @@ export default function Users() {
                   </td>
                   <td className="text-center max-w-[15px] break-words">
                     <button
+                      disabled={doc.isMsadUser}
                       className="btn btn-error btn-sm text-white"
                       onClick={() => removeDocument(doc._id)}
                     >
