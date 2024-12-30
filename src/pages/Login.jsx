@@ -35,21 +35,21 @@ export default function Login() {
     setLoading(true);
     console.log('Login attempt with:', username, password);
     if (username === 'admin' && password === 'admin') {
-      setIsAuthenticated(true);
-      setLoading(false);
-      Cookies.set('auth_token', 'Valid_token_given!', { expires: 7 });
-      localStorage.setItem('loggedInUser', JSON.stringify({name:username}))
-      fireToast('info', 'Welcome Admin!');
-      navigate('/dashboard');
+      // setIsAuthenticated(true);
+      // setLoading(false);
+      // Cookies.set('auth_token', 'Valid_token_given!', { expires: 7 });
+      // localStorage.setItem('loggedInUser', JSON.stringify({name:username}))
+      // fireToast('info', 'Welcome Admin!');
+      // navigate('/dashboard');
     } else {
       const payload = { email: username, password }
-      AxiosInstance.post('http://localhost:5000/api/users/get-user-profile', payload)
+      AxiosInstance.post('http://localhost:5000/api/users/login', payload)
         .then((response) => {
           setIsAuthenticated(true);
-          localStorage.setItem('loggedInUser', JSON.stringify(response.data.data[0]))
-          console.log(response.data.data[0]);
-          Cookies.set('auth_token', 'Valid_token_given!', { expires: 7 });
-          fireToast('info', 'Welcome Admin!');
+          localStorage.setItem('loggedInUser', JSON.stringify(response.data.data))
+          // console.log(response.data.token);
+          Cookies.set('auth_token', response.data.token, { expires: 7 });
+          // fireToast('info', 'Welcome Admin!');
           setTimeout(() => {
             navigate('/dashboard');
           }, 300);

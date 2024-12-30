@@ -15,6 +15,8 @@ import MyProfile from "./pages/MyProfile.jsx";
 import ApiLogs from "./pages/ApiLogs.jsx";
 import MSADSync from "./pages/settings/MSADSync.jsx";
 import MsExServer from "./pages/settings/MsExServer.jsx";
+import TemplateCategory from "./pages/settings/TemplateCategory.jsx";
+import RoleManagement from "./pages/role_management/index.jsx";
 function App() {
 
   return <AuthProvider>
@@ -27,7 +29,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="users" element={<Users />} />
-            <Route path="roles" element={<Dashboard />} />
+            <Route path="roles" element={<RoleManagement />} />
             <Route path="logs" element={<ApiLogs />} />
             <Route path="settings" element={<Dashboard />} />
             <Route path="profile" element={<MyProfile />} />
@@ -41,6 +43,7 @@ function App() {
               <Route path="logo" element={<LogoSetting />} />
               <Route path="ms-ad-sync" element={<MSADSync />} />
               <Route path="exchange-server" element={<MsExServer />} />
+              <Route path="template-category" element={<TemplateCategory />} />
             </Route>
 
           </Route>

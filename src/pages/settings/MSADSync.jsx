@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { AxiosInstance } from "../../Auth/Interceptor";
+import { convertToNorwayTime } from "../../utils/helpers";
 
 export default function MSADSync() {
   const [formData, setformData] = useState({
@@ -69,13 +70,42 @@ export default function MSADSync() {
           <div className="card bg-white p-6 w-full">
 
             <p className="font-bold text-xl bg-gray-200 pl-4 pt-2 rounded-lg border-b pb-2">Synchronization</p>
-            {configFields.slice(11, 14).map((config, i) => <div key={i} className="form-control">
+            {configFields.slice(11, 12).map((config, i) => <div key={i} className="form-control">
               <label htmlFor="title" className="label">
                 <span className="label-text">{config.name}</span>
               </label>
               <input
+                type="number"
+                min={0}
+                max={24}
                 value={formData[config.key]}
                 onChange={(e) => setformData(u => { return { ...u, [config.key]: e.target.value } })}
+                className="input input-bordered input-sm"
+                required
+              />
+            </div>)}
+            {configFields.slice(12, 13).map((config, i) => <div key={i} className="form-control">
+              <label htmlFor="title" className="label">
+                <span className="label-text">{config.name}</span>
+              </label>
+              <input
+                type="number"
+                min={0}
+                max={60}
+                value={formData[config.key]}
+                onChange={(e) => setformData(u => { return { ...u, [config.key]: e.target.value } })}
+                className="input input-bordered input-sm"
+                required
+              />
+            </div>)}
+            {configFields.slice(13, 14).map((config, i) => <div key={i} className="form-control">
+              <label htmlFor="title" className="label">
+                <span className="label-text">{config.name} (in Norway timezone)</span>
+              </label>
+              <input
+                value={convertToNorwayTime(formData[config.key])}
+                disabled
+                // onChange={(e) => setformData(u => { return { ...u, [config.key]: e.target.value } })}
                 className="input input-bordered input-sm"
                 required
               />
@@ -90,9 +120,12 @@ export default function MSADSync() {
 
         </div>
       </div>
-      <div className="flex justify-start">
-        <button className="btn btn-sm text-lg w-full btn-primary text-white mt-4" type="submit">
+      <div className="flex justify-center gap-4 flex-wrap">
+        <button className="btn text-lg  btn-primary w-full text-white mt-4" type="submit">
           Update
+        </button>
+        <button className="btn text-lg  btn-primary w-full bg-black  text-white mt-1" type="button">
+          Sync MS Azure Users Now!
         </button>
       </div>
     </form>

@@ -71,7 +71,11 @@ export default function Users() {
     <div className="p-4">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">User List</h1>
+        <div className="flex gap-4">
         <button className="btn btn-primary text-white" onClick={createDoc}>Add New User</button>
+        <button className="btn btn-primary bg-black text-white" onClick={createDoc}>Sync Now!</button>
+
+        </div>
       </div>
       <AddNewUser isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} setRefetchDocs={setRefetchDocs} />
       <div className="card shadow-lg">
