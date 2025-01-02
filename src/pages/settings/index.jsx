@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { AxiosInstance } from "../../Auth/Interceptor";
+import { fireToast } from "../../utils/toastify";
 
 export default function MicrosoftActiveDirectorySettings() {
   const [formData, setformData] = useState({
@@ -57,6 +58,7 @@ export default function MicrosoftActiveDirectorySettings() {
     AxiosInstance.post('http://localhost:5000/api/microsoft_ad', formData)
       .then((response) => {
         console.log(response.data.data);
+        fireToast('success', 'Microsoft Azure settings updated successfully')
       })
       .catch((error) => {
         console.error(error.message);
@@ -95,7 +97,7 @@ export default function MicrosoftActiveDirectorySettings() {
         </div>
       </div>
       <div className="flex justify-start">
-        <button className="btn btn-sm text-lg w-full btn-primary text-white mt-4" type="submit">
+        <button className="btn  text-lg w-full btn-primary text-white mt-4" type="submit">
           Update
         </button>
       </div>

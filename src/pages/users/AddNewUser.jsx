@@ -1,33 +1,30 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AxiosInstance } from '../../Auth/Interceptor';
 import { fireToast } from '../../utils/toastify';
 
-export default function AddNewUser({ isModalOpen, setIsModalOpen, setRefetchDocs }) {
+export default function AddNewUser({ isModalOpen, setIsModalOpen, setRefetchDocs, userData, setUserData }) {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [userData, setUserData] = useState({
-    name: '',
-    email: '',
-    password: '', // Note: Hash passwords in a real application
-    role: 'user',
-    willBeAffected: true,
-    isActive: true,
-  })
+
   const uploadUser = async (userData, file) => {
     try {
       const formData = new FormData();
-
+      if (userData.isEditMode) {
+        formData.append('_id', userData._id);
+      }
+      formData.append('password', userData.password || '');
       formData.append('name', userData.name);
       formData.append('email', userData.email);
-      formData.append('password', userData.password);
       formData.append('role', userData.role);
+      formData.append('isActive', userData.isActive);
       formData.append('file', file); // Attach the file
+      console.log('User Created Successfully:', formData);
 
+      const url = userData.isEditMode ? `http://localhost:5000/api/users/update-user-profile?userId=${userData._id}` : 'http://localhost:5000/api/users/create-user';
       // POST Request
-      const response = await AxiosInstance.post('http://localhost:5000/api/users/create-user', formData, {
+      const response = await AxiosInstance.post(url, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      console.log('User Created Successfully:', formData, response.data);
       setIsModalOpen(false)
       setRefetchDocs(r => !r)
       setUserData({
@@ -35,6 +32,9 @@ export default function AddNewUser({ isModalOpen, setIsModalOpen, setRefetchDocs
         email: '',
         password: '',
         role: 'user',
+        willBeAffected: true,
+        isActive: true,
+        isEditMode: false
       })
       setSelectedFile(null)
     } catch (error) {
@@ -81,7 +81,9 @@ export default function AddNewUser({ isModalOpen, setIsModalOpen, setRefetchDocs
         <div className="modal modal-open">
           <div className="modal-box relative">
             <div className="flex justify-between items-center mb-4">
-              <p className="text-xl font-bold">Add New User</p>
+              <p className="text-xl font-bold">
+                {userData.isEditMode ? 'Update' : 'Add New'} User
+              </p>
               {/* Close Button */}
               <button className="btn btn-sm btn-circle absolute right-2 top-2" onClick={() => setIsModalOpen(false)}> ✕ </button>
             </div>
@@ -114,9 +116,9 @@ export default function AddNewUser({ isModalOpen, setIsModalOpen, setRefetchDocs
                   required
                 />
               </div>
-              <div className="form-control">
+              {<div className="form-control">
                 <label htmlFor="password" className="label">
-                  <span className="label-text">Password</span>
+                  <span className="label-text">Password <span className='text-info'>({userData.isEditMode && 'Skip this field to use old passowrd'})</span></span>
                 </label>
                 <input
                   id="password"
@@ -124,9 +126,9 @@ export default function AddNewUser({ isModalOpen, setIsModalOpen, setRefetchDocs
                   value={userData.password}
                   onChange={(e) => setUserData(u => { return { ...u, password: e.target.value } })}
                   className="input input-bordered"
-                  required
+                  required={!userData.isEditMode}
                 />
-              </div>
+              </div>}
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">Select a Role</span>
@@ -175,7 +177,7 @@ export default function AddNewUser({ isModalOpen, setIsModalOpen, setRefetchDocs
                   className="btn btn-md text-lg w-full btn-primary text-white mt-4"
                   type="submit"
                 >
-                  Create
+                  {userData.isEditMode ? 'Update' : 'Create'}
                 </button>
               </div>
             </form>

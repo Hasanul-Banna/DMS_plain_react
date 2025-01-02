@@ -14,7 +14,21 @@ export default {
   // eslint-disable-next-line no-undef
   plugins: [daisyui, require('tailwind-scrollbar')],
   daisyui: {
-    themes: false, // true: all themes | false: only light + dark | array: specific themes like this ["light", "dark", "cupcake"]
+    themes: [
+      {
+        mytheme: {
+          primary: '#5B21B6', // Custom primary color
+          secondary: '#F6D860', // You can customize other colors as needed
+          accent: '#37CDBE',
+          neutral: '#3D4451',
+          'base-100': '#FFFFFF',
+          info: '#3ABFF8',
+          success: '#36D399',
+          warning: '#FBBD23',
+          error: 'crimson'
+        }
+      }
+    ], // true: all themes | false: only light + dark | array: specific themes like this ["light", "dark", "cupcake"]
     darkTheme: 'light', // name of one of the included themes for dark mode
     base: true, // applies background color and foreground color for root element by default
     styled: true, // include daisyUI colors and design decisions for all components

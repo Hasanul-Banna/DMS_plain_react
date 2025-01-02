@@ -1,10 +1,10 @@
-import { ChevronDown, Download, Filter, FilterIcon, ListFilter, Trash } from 'lucide-react';
+import { ChevronDown, Download, ListFilter, Trash } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { AxiosInstance } from '../Auth/Interceptor';
 import { useAuth } from '../hooks/auth';
-import { fireToast } from '../utils/toastify';
 import { convertToNorwayTime, exportArrayAsJSON } from '../utils/helpers';
+
 export default function ApiLogs() {
   const { setUiLoader } = useAuth()
   const [documents, setDocuments] = useState([]);

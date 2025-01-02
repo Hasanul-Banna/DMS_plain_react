@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react"
 import { AxiosInstance } from "../../Auth/Interceptor";
 import { convertToNorwayTime } from "../../utils/helpers";
+import { fireToast } from "../../utils/toastify";
+import { useAuth } from "../../hooks/auth";
 
 export default function MSADSync() {
+  const { isUiLoading, setUiLoader } = useAuth()
   const [formData, setformData] = useState({
     id: '',
     isActivate: false,
@@ -58,9 +61,24 @@ export default function MSADSync() {
     AxiosInstance.post('http://localhost:5000/api/microsoft_ad', formData)
       .then((response) => {
         console.log(response.data.data);
+        fireToast('success', 'Microsoft Azure settings updated successfully')
       })
       .catch((error) => {
         console.error(error.message);
+      });
+  }
+  const syncNow = (e) => {
+    e.preventDefault();
+    setUiLoader(true)
+    AxiosInstance.post('http://localhost:5000/api/users/sync_azure_users')
+      .then((response) => {
+        console.log(response.data.data);
+        fireToast('success', 'Azure User sync completed')
+      })
+      .catch((error) => {
+        console.error(error.message);
+      }).finally(() => {
+        setUiLoader(false)
       });
   }
   return (
@@ -124,7 +142,7 @@ export default function MSADSync() {
         <button className="btn text-lg  btn-primary w-full text-white mt-4" type="submit">
           Update
         </button>
-        <button className="btn text-lg  btn-primary w-full bg-black  text-white mt-1" type="button">
+        <button className="btn text-lg  btn-primary w-full bg-black  text-white mt-1" disabled={isUiLoading} type="button" onClick={syncNow}>
           Sync MS Azure Users Now!
         </button>
       </div>
