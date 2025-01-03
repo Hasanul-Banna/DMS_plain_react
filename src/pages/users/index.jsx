@@ -18,7 +18,7 @@ export default function Users() {
   const pageCount = Math.ceil(documents.length / itemsPerPage);
   const [isStatusFIlterOpen, setIsStatusFIlterOpen] = useState(false);
   const [isTypeFilterOpen, setTypeFilter] = useState(false);
-  const [filterStatus, setFilterStatus] = useState('');
+  const [filterStatus, setFilterStatus] = useState('Active');
   const [filterType, setFilterType] = useState('');
   const [userData, setUserData] = useState({
     name: '',
