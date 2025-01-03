@@ -10,7 +10,7 @@ export default function RoleManagement() {
   const { setUiLoader } = useAuth()
   const [documents, setDocuments] = useState([]);
   const [currentDocs, setCurrentDocs] = useState([]);
-  const [docDetails, setDocDetails] = useState({ isEditMode: false });
+  const [docDetails, setDocDetails] = useState({ isEditMode: false, _id: '', title: '' });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refresh, setRefetchDocs] = useState(false);
 
@@ -22,7 +22,7 @@ export default function RoleManagement() {
 
   useEffect(() => {
     setUiLoader(true)
-    AxiosInstance.get('http://localhost:5000/api/docs')
+    AxiosInstance.get('http://localhost:5000/api/roles')
       .then((response) => {
         console.log(response.data.data);
         setDocuments(response.data.data);
@@ -37,14 +37,14 @@ export default function RoleManagement() {
   }, [refresh]);
   const removeDocument = (id) => {
     setUiLoader(true)
-    AxiosInstance.delete('http://localhost:5000/api/docs/delete', { data: { id } })
+    AxiosInstance.delete('http://localhost:5000/api/roles/delete', { data: { id } })
       .then((response) => {
         console.log('Role deleted successfully:', response.data);
         setTimeout(() => {
           setUiLoader(false)
         }, 500);
         // setDocuments(documents.filter((doc) => doc._id !== id));
-        setRefetchDocs(r=> !r)
+        setRefetchDocs(r => !r)
       })
       .catch((error) => {
         if (error.response) {
@@ -54,7 +54,7 @@ export default function RoleManagement() {
         }
       });
   };
-  
+
   const createDoc = () => {
     setDocDetails({
       isEditMode: false,
@@ -83,31 +83,31 @@ export default function RoleManagement() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">Roles</h1>
         <div className="flex gap-4">
-        <button className="btn btn-primary text-white" onClick={createDoc}>Add New Role</button>
-        <button className="btn btn-primary bg-black text-white" onClick={createDoc}>Sync Roles!</button>
+          <button className="btn btn-primary text-white" onClick={createDoc}>Add New Role</button>
+          <button className="btn btn-primary bg-black text-white" onClick={createDoc}>Sync Roles!</button>
         </div>
       </div>
-      <AddNewRole docDetails={docDetails} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} setRefetchDocs={setRefetchDocs} />
+      <AddNewRole docDetails={docDetails} setDocDetails={setDocDetails} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} setRefetchDocs={setRefetchDocs} />
       <div className="card shadow-lg">
         <div className="overflow-x-auto">
           <table className="table w-full bg-white">
             <thead>
               <tr className="bg-gray-700">
-                <th className="text-white text-center font-bold">Role name</th>
+                <th className="text-white text-center font-bold">Role</th>
                 <th className="text-white text-center font-bold">Actions</th>
               </tr>
             </thead>
             <tbody>
               {currentDocs.map((doc) => (
                 <tr key={doc._id} className="hover">
-                  <td className="text-center">{doc?.name}</td>
+                  <td className="text-center">{doc?.title}</td>
                   <td className="text-center">
                     <button className="btn btn-outline btn-sm mr-2" onClick={() => editDocument(doc)}> <Edit size={15}></Edit> Update</button>
                     <button
                       className="btn btn-error btn-sm text-white"
                       onClick={() => removeDocument(doc._id)}
                     >
-                     <Trash color='white' size={15}></Trash> Remove
+                      <Trash color='white' size={15}></Trash> Remove
                     </button>
                   </td>
                 </tr>

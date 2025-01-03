@@ -77,6 +77,7 @@ export default function MSADSync() {
       })
       .catch((error) => {
         console.error(error.message);
+        fireToast('error', error.message)
       }).finally(() => {
         setUiLoader(false)
       });

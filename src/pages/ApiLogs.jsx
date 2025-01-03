@@ -20,6 +20,7 @@ export default function ApiLogs() {
   const pageCount = Math.ceil(documents.length / itemsPerPage);
   const [filterMethod, setFilterMethod] = useState('');
   const [filterType, setFilterType] = useState('');
+  const [reqBody, setReqBody] = useState('');
   useEffect(() => {
     FetchAPILogs(filterMethod, filterType)
   }, [filterMethod, filterType]);
@@ -64,17 +65,24 @@ export default function ApiLogs() {
         console.error(error.message);
       });
   };
- 
 
 
+  const renderKeyValuePair = (obj) => {
+    return Object.entries(obj).map(([key, value]) => (
+      <div key={key} style={{ marginBottom: '10px' }} className='text-left'>
+        <strong style={{ color: '#555' }}>{key}:</strong>{' '}
+        <span>{typeof value === 'boolean' ? value.toString() : value}</span>
+      </div>
+    ));
+  };
 
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
-        <h1 className="text-2xl font-bold">API Log List</h1>
-        (<p> Method <ListFilter size={14} className='inline'/> :  {filterMethod.toUpperCase() || 'All'} </p>  | 
-        <p> Type <ListFilter size={14} className='inline'/> :  {filterType.toUpperCase() || 'All'} </p>)
+          <h1 className="text-2xl font-bold">API Log List</h1>
+          (<p> Method <ListFilter size={14} className='inline' /> :  {filterMethod.toUpperCase() || 'All'} </p>  |
+          <p> Type <ListFilter size={14} className='inline' /> :  {filterType.toUpperCase() || 'All'} </p>)
         </div>
         <div>
           <button className="btn bg-[red] text-white btn-sm mr-2" onClick={() => { clearLogs() }} >
@@ -126,7 +134,24 @@ export default function ApiLogs() {
                   <td className="text-center">{doc.statusCode}</td>
                   <td className="text-center">{convertToNorwayTime(doc.timestamp)}</td>
                   <td className="text-center">{(doc.responseBody.success ? 'Success' : 'Failed')}</td>
-                  <td className="max-w-[300px] break-words text-center">{(JSON.stringify(doc?.requestBody) || null)}</td>
+                  <td className="max-w-[300px] break-words text-center">
+                    {doc?.requestBody && <button
+                      className="btn btn-xs btn-outline"
+                      onClick={() => {
+                        setReqBody(doc?.requestBody || {})
+                          ; document.getElementById('req_body_modal').showModal()
+                      }}
+                    >View Request Body</button>}
+                    <dialog id="req_body_modal" className="modal">
+                      <div className="modal-box">
+                        {renderKeyValuePair(reqBody)}
+                        <form method="dialog">
+                          {/* if there is a button in form, it will close the modal */}
+                          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                        </form>
+                      </div>
+                    </dialog>
+                  </td>
                   <td className="max-w-[300px] break-words text-center">{(doc.responseBody.msg)}</td>
                 </tr>
               ))}

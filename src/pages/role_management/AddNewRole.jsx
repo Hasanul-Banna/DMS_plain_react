@@ -1,32 +1,29 @@
-import { useEffect, useState } from 'react'
-import { AxiosInstance } from '../../Auth/Interceptor';
 import { useNavigate } from 'react-router';
+import { AxiosInstance } from '../../Auth/Interceptor';
+import { fireToast } from '../../utils/toastify';
 
-export default function AddNewRole({ docDetails, isModalOpen, setIsModalOpen, setRefetchDocs }) {
+export default function AddNewRole({ docDetails, setDocDetails, isModalOpen, setIsModalOpen, setRefetchDocs }) {
   const navigate = useNavigate()
-  const [title, setTitle] = useState('');
-  useEffect(() => {
-    setTitle(docDetails?.isEditMode ? docDetails.name : '')
-  }, [docDetails?.isEditMode])
-  const uploadDocument = async (name) => {
+  const createOrUploadRole = async () => {
     try {
-      const payload = { name }
-
+      const payload = { title: docDetails.title.trim() }
+      if (docDetails?.isEditMode) {
+        payload.id = docDetails._id
+      }
+      const url = docDetails?.isEditMode ? 'http://localhost:5000/api/roles/update' : 'http://localhost:5000/api/roles/create'
       // POST Request
-      const response = await AxiosInstance.post('http://localhost:5000/api/docs/upload', payload, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const response = await AxiosInstance.post(url, payload);
 
-      console.log('Document uploaded successfully:', payload, response.data);
+      console.log('Roles uploaded successfully:', payload, response.data);
       setIsModalOpen(false)
       setRefetchDocs(r => !r)
-      setTitle('')
-      // navigate('/documents');
-      // return response.data;
+      setDocDetails({ isEditMode: false, _id: '', title: '' })
     } catch (error) {
       if (error.response) {
         console.error('Error:', error.response.data.error || error.response.data.msg);
+        fireToast('error', error.response.data.error || error.response.data.msg);
       } else {
+        fireToast('error', error.message);
         console.error('Error:', error.message);
       }
       throw error;
@@ -34,7 +31,7 @@ export default function AddNewRole({ docDetails, isModalOpen, setIsModalOpen, se
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    uploadDocument(title);
+    createOrUploadRole();
   };
   return (
     <div>
@@ -48,9 +45,7 @@ export default function AddNewRole({ docDetails, isModalOpen, setIsModalOpen, se
             </div>
             {docDetails?.isEditMode && < div >
               <p>ID : {docDetails._id}</p>
-              {/* <p>Title : {docDetails.name}</p> */}
             </div>}
-            {/* Modal Content */}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="form-control">
                 <label htmlFor="title" className="label">
@@ -58,15 +53,15 @@ export default function AddNewRole({ docDetails, isModalOpen, setIsModalOpen, se
                 </label>
                 <input
                   id="title"
-                  minLength={4}
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  minLength={2}
+                  value={docDetails.title}
+                  onChange={(e) => setDocDetails({ ...docDetails, title: e.target.value })}
                   className="input input-bordered"
                   required
                 />
               </div>
               <button
-                className="btn btn-sm btn-primary"
+                className="btn btn-sm btn-primary text-white"
                 type="submit"
               >
                 Submit
