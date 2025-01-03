@@ -4,6 +4,18 @@ import { fireToast } from '../../utils/toastify';
 
 export default function AddNewUser({ isModalOpen, setIsModalOpen, setRefetchDocs, userData, setUserData }) {
   const [selectedFile, setSelectedFile] = useState(null);
+  const [roles, setRoles] = useState([]);
+  useEffect(() => {
+    getRoles()
+  }, [])
+  const getRoles = () => {
+    AxiosInstance.get('http://localhost:5000/api/roles').then((response) => {
+      console.log(response.data.data);
+      setRoles(response.data.data);
+    }).catch((error) => {
+      console.error(error.message);
+    });
+  }
 
   const uploadUser = async (userData, file) => {
     try {
@@ -118,7 +130,7 @@ export default function AddNewUser({ isModalOpen, setIsModalOpen, setRefetchDocs
               </div>
               {<div className="form-control">
                 <label htmlFor="password" className="label">
-                  <span className="label-text">Password <span className='text-info'>({userData.isEditMode && 'Skip this field to use old passowrd'})</span></span>
+                  <span className="label-text">Password <span className='text-info'>{userData.isEditMode && '(Skip this field to use old passowrd)'}</span></span>
                 </label>
                 <input
                   id="password"
@@ -138,11 +150,9 @@ export default function AddNewUser({ isModalOpen, setIsModalOpen, setRefetchDocs
                   value={userData.role}
                   onChange={(e) => setUserData(u => { return { ...u, role: e.target.value } })}
                 >
-                  {/* <option disabled value="">
-                    Choose an user role
-                  </option> */}
-                  <option value="admin">Admin</option>
-                  <option value="user">User</option>
+                  {roles.map((role) =>
+                    <option key={role._id} value={role.title}>{role.title}</option>
+                  )}
                 </select>
               </div>
               <div className="form-control">

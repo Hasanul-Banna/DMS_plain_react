@@ -16,13 +16,15 @@ export default function DocumentList() {
 
   const itemsPerPage = 10 // Number of items per page
   const [currentPage, setCurrentPage] = useState(0);
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   // Get the documents for the current page
   const pageCount = Math.ceil(documents.length / itemsPerPage);
 
   useEffect(() => {
     setUiLoader(true)
-    AxiosInstance.get('http://localhost:5000/api/docs')
+    AxiosInstance.get(`http://localhost:5000/api/docs?search=${search}`)
       .then((response) => {
         console.log(response.data.data);
         setDocuments(response.data.data);
@@ -35,6 +37,24 @@ export default function DocumentList() {
         console.error(error.message);
       });
   }, [refresh]);
+  useEffect(() => {
+    if (!search) {
+      setRefetchDocs(r => !r)
+      return
+    }
+    // Clear previous debounce and set a new timeout
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search); // Update debounced value after delay
+    }, 1000); // Adjust debounce delay as needed
+    // Cleanup on input change or unmount
+    return () => clearTimeout(handler);
+  }, [search]);
+
+  useEffect(() => {
+    if (debouncedSearch) {
+      setRefetchDocs(r => !r)
+    }
+  }, [debouncedSearch]);
   const removeDocument = (id) => {
     setUiLoader(true)
     AxiosInstance.delete('http://localhost:5000/api/docs/delete', { data: { id } })
@@ -44,7 +64,7 @@ export default function DocumentList() {
           setUiLoader(false)
         }, 500);
         // setDocuments(documents.filter((doc) => doc._id !== id));
-        setRefetchDocs(r=> !r)
+        setRefetchDocs(r => !r)
       })
       .catch((error) => {
         if (error.response) {
@@ -115,6 +135,7 @@ export default function DocumentList() {
     <div className="p-4">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">Template List</h1>
+        <input type="text" placeholder="Search Template by name" className="input input-md input-bordered w-full max-w-lg" value={search} onChange={(e) => setSearch(e.target.value)} />
         <button className="btn btn-primary text-white" onClick={createDoc}>Upload New Document</button>
       </div>
       <AddNewDoc docDetails={docDetails} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} setRefetchDocs={setRefetchDocs} />
@@ -139,13 +160,13 @@ export default function DocumentList() {
                       className="btn btn-outline btn-sm mr-2"
                       onClick={() => downloadDocx(doc.name, `http://localhost:5000/${doc.file_path}`)}
                     >
-                     <Download size={15}></Download> Download
+                      <Download size={15}></Download> Download
                     </button>
                     <button
                       className="btn btn-error btn-sm text-white"
                       onClick={() => removeDocument(doc._id)}
                     >
-                     <Trash color='white' size={15}></Trash> Remove
+                      <Trash color='white' size={15}></Trash> Remove
                     </button>
                   </td>
                 </tr>
