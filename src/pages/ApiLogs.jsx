@@ -134,14 +134,14 @@ export default function ApiLogs() {
                   <td className="text-center">{doc.statusCode}</td>
                   <td className="text-center">{convertToNorwayTime(doc.timestamp)}</td>
                   <td className="text-center">{(doc.responseBody.success ? 'Success' : 'Failed')}</td>
-                  <td className="max-w-[300px] break-words text-center">
+                  <td className="min-w-[150px] break-words text-center">
                     {doc?.requestBody && <button
                       className="btn btn-xs btn-outline"
                       onClick={() => {
                         setReqBody(doc?.requestBody || {})
                           ; document.getElementById('req_body_modal').showModal()
                       }}
-                    >View Request Body</button>}
+                    >RequestBody</button>}
                     <dialog id="req_body_modal" className="modal">
                       <div className="modal-box">
                         {renderKeyValuePair(reqBody)}
