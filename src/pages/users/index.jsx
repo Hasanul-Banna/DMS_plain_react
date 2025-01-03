@@ -13,7 +13,8 @@ export default function Users() {
 
   const itemsPerPage = 10 // Number of items per page
   const [currentPage, setCurrentPage] = useState(0);
-
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   // Get the documents for the current page
   const pageCount = Math.ceil(documents.length / itemsPerPage);
   const [isStatusFIlterOpen, setIsStatusFIlterOpen] = useState(false);
@@ -31,7 +32,7 @@ export default function Users() {
   })
   useEffect(() => {
     setUiLoader(true)
-    const url = `http://localhost:5000/api/users?isActive=${filterStatus || ''}&isMsadUser=${filterType || ''}`
+    const url = `http://localhost:5000/api/users?isActive=${filterStatus || ''}&isMsadUser=${filterType || ''}&search=${search || ''}`
     AxiosInstance.get(url)
       .then((response) => {
         console.log(response.data.data);
@@ -45,6 +46,24 @@ export default function Users() {
         console.error(error.message);
       });
   }, [filterStatus, filterType, refresh]);
+  useEffect(() => {
+    if (!search) {
+      setRefetchDocs(r => !r)
+      return
+    }
+    // Clear previous debounce and set a new timeout
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search); // Update debounced value after delay
+    }, 1000); // Adjust debounce delay as needed
+    // Cleanup on input change or unmount
+    return () => clearTimeout(handler);
+  }, [search]);
+
+  useEffect(() => {
+    if (debouncedSearch) {
+      setRefetchDocs(r => !r)
+    }
+  }, [debouncedSearch]);
   const createUser = () => {
     setUserData({
       name: '',
@@ -97,23 +116,37 @@ export default function Users() {
   };
   return (
     <div className="p-4">
-      <div className="flex justify-between items-center mb-8">
-        <div className="flex items-center gap-2">
-          {/* <h1 className="text-2xl font-bold">API Log List</h1> */}
-          <h1 className="text-2xl font-bold">User List</h1>
-          (<p> Status <ListFilter size={14} className='inline' /> :  {filterStatus.toUpperCase() || 'All'} </p>  |
-          <p> User Type <ListFilter size={14} className='inline' /> :  {filterType.toUpperCase() || 'All'} </p>)
+      <div className="flex flex-col lg:flex-row justify-between items-center gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row items-center gap-2">
+          <h1 className="text-xl sm:text-2xl font-bold">User List</h1>
+          <div className="flex flex-wrap items-center gap-2 text-sm sm:text-base">
+            <p>
+              Status <ListFilter size={14} className="inline" /> : {filterStatus.toUpperCase() || 'All'}
+            </p>
+            <span className="hidden sm:inline">|</span>
+            <p>
+              User Type <ListFilter size={14} className="inline" /> : {filterType.toUpperCase() || 'All'}
+            </p>
+          </div>
         </div>
-        <div></div>
-        <div className="flex gap-4">
-          <button className="btn btn-primary text-white" onClick={createUser}>Add New User</button>
+        <input
+          type="text"
+          placeholder="Search by user name or email"
+          className="input input-md input-bordered w-full lg:max-w-lg"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <div className="flex gap-2 sm:gap-4">
+          <button className="btn btn-primary text-white w-full sm:w-auto" onClick={createUser}>
+            Add New User
+          </button>
           {/* <button className="btn btn-primary bg-black text-white" onClick={createUser}>Sync Now!</button> */}
-
         </div>
       </div>
+
       <AddNewUser isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} setRefetchDocs={setRefetchDocs} userData={userData} setUserData={setUserData} />
       <div className="card shadow-lg">
-        <div className="overflow-x-auto min-h-[120px]">
+        <div className="overflow-auto min-h-[120px]">
           <table className="table w-full bg-white">
             <thead>
               <tr className="bg-gray-700">
@@ -131,22 +164,84 @@ export default function Users() {
                 </th>
                 <th className="text-white text-center font-bold break-words">
                   <div className="dropdown">
-                    <div tabIndex={0} role="" className="cursor-pointer" onClick={() => setTypeFilter(true)}> <ChevronDown size={14} strokeWidth={4} className='inline' /> Type</div>
-                    {isTypeFilterOpen && <ul tabIndex={0} className="menu dropdown-content bg-gray-900 rounded-md z-[1] w-32 p-0 shadow mt-3 mx-w-[80px]" onClick={() => setTypeFilter(false)}>
-                      <li><a className='text-xs font-semibold px-4 py-2' onClick={() => { setFilterType('') }}>All</a></li>
-                      <li><a className='text-xs font-semibold px-4 py-2' onClick={() => { setFilterType('Azure') }}>Azure</a></li>
-                      <li><a className='text-xs font-semibold px-4 py-2' onClick={() => { setFilterType('App-User') }}>App user</a></li>
-                    </ul>}
+                    <div
+                      tabIndex={0}
+                      className="cursor-pointer flex items-center justify-center gap-1"
+                      onClick={() => setTypeFilter(true)}
+                    >
+                      <ChevronDown size={14} strokeWidth={4} className="inline" /> Type
+                    </div>
+                    {isTypeFilterOpen && (
+                      <ul
+                        tabIndex={0}
+                        className="menu dropdown-content bg-gray-900 rounded-md z-[1] w-32 p-0 shadow mt-3"
+                        onClick={() => setTypeFilter(false)}
+                      >
+                        <li> <a className="text-xs font-semibold px-4 py-2" onClick={() => setFilterType('')} >
+                          All
+                        </a>
+                        </li>
+                        <li>
+                          <a
+                            className="text-xs font-semibold px-4 py-2"
+                            onClick={() => setFilterType('Azure')}
+                          >
+                            Azure
+                          </a>
+                        </li>
+                        <li>
+                          <a
+                            className="text-xs font-semibold px-4 py-2"
+                            onClick={() => setFilterType('App-User')}
+                          >
+                            App user
+                          </a>
+                        </li>
+                      </ul>
+                    )}
                   </div>
                 </th>
                 <th className="text-white text-center font-bold break-words">
                   <div className="dropdown">
-                    <div tabIndex={0} role="" className="cursor-pointer" onClick={() => setIsStatusFIlterOpen(true)}> <ChevronDown size={14} strokeWidth={4} className='inline' /> Status</div>
-                    {isStatusFIlterOpen && <ul tabIndex={0} className="menu dropdown-content bg-gray-900 rounded-md z-[1] w-32 p-0 shadow mt-3 mx-w-[80px]" onClick={() => setIsStatusFIlterOpen(false)}>
-                      <li><a className='text-xs font-semibold px-4 py-2' onClick={() => { setFilterStatus('') }}>All</a></li>
-                      <li><a className='text-xs font-semibold px-4 py-2' onClick={() => { setFilterStatus('Active') }}>Active</a></li>
-                      <li><a className='text-xs font-semibold px-4 py-2' onClick={() => { setFilterStatus('Inactive') }}>Inactive</a></li>
-                    </ul>}
+                    <div
+                      tabIndex={0}
+                      className="cursor-pointer flex items-center justify-center gap-1"
+                      onClick={() => setIsStatusFIlterOpen(true)}
+                    >
+                      <ChevronDown size={14} strokeWidth={4} className="inline" /> Status
+                    </div>
+                    {isStatusFIlterOpen && (
+                      <ul
+                        tabIndex={0}
+                        className="menu dropdown-content bg-gray-900 rounded-md z-[1] w-32 p-0 shadow mt-3"
+                        onClick={() => setIsStatusFIlterOpen(false)}
+                      >
+                        <li>
+                          <a
+                            className="text-xs font-semibold px-4 py-2"
+                            onClick={() => setFilterStatus('')}
+                          >
+                            All
+                          </a>
+                        </li>
+                        <li>
+                          <a
+                            className="text-xs font-semibold px-4 py-2"
+                            onClick={() => setFilterStatus('Active')}
+                          >
+                            Active
+                          </a>
+                        </li>
+                        <li>
+                          <a
+                            className="text-xs font-semibold px-4 py-2"
+                            onClick={() => setFilterStatus('Inactive')}
+                          >
+                            Inactive
+                          </a>
+                        </li>
+                      </ul>
+                    )}
                   </div>
                 </th>
                 <th className="text-white text-center font-bold break-words">
@@ -156,15 +251,16 @@ export default function Users() {
             </thead>
             <tbody>
               {currentDocs.map((user) => (
-                <tr key={user._id} className="hover" >
-                  <td className="text-center break-words mx-auto">
+                <tr key={user._id} className="hover">
+                  <td className="text-center break-words">
                     {user.imagePath ? (
                       <img
                         src={`http://localhost:5000/${user.imagePath}`}
                         className="h-[66px] w-[66px] rounded-full mx-auto"
+                        alt="User Avatar"
                       />
                     ) : (
-                      <User size={40} className='mx-auto' />
+                      <User size={40} className="mx-auto" />
                     )}
                   </td>
                   <td className="text-center break-words">{user.name}</td>
@@ -173,11 +269,14 @@ export default function Users() {
                     {user?.role?.toUpperCase()}
                   </td>
                   <td className="text-center break-words">
-                    {user.isMsadUser ? "Azure" : "App user"}
+                    {user.isMsadUser ? 'Azure' : 'App user'}
                   </td>
                   <td className="text-center break-words">
-                    <div className={`p-1 rounded-md text-white ${user.isActive ? "bg-emerald-500" : "bg-red-700"}`} >
-                      {user.isActive ? "Active" : "Inactive"}
+                    <div
+                      className={`p-1 rounded-md text-white ${user.isActive ? 'bg-emerald-500' : 'bg-red-700'
+                        }`}
+                    >
+                      {user.isActive ? 'Active' : 'Inactive'}
                     </div>
                   </td>
                   <td className="text-center break-words">
@@ -185,23 +284,23 @@ export default function Users() {
                       className="btn btn-outline btn-xs mr-2"
                       onClick={() => UpdateUser(user)}
                     >
-                      <Edit size={12}></Edit> Update
+                      <Edit size={12} /> Update
                     </button>
                     <button
                       disabled={user.isMsadUser}
                       className="btn btn-error btn-xs text-white"
                       onClick={() => removeUser(user._id)}
                     >
-                      <Trash color="white" size={12}></Trash> Remove
+                      <Trash color="white" size={12} /> Remove
                     </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-
         </div>
       </div>
+
       {/* Pagination */}
       <div className="mx-4 my-5 flex justify-between items-center">
         <div className='text-xl font-bold'>

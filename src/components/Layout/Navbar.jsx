@@ -2,6 +2,7 @@ import { LogOut, User } from "lucide-react";
 import { NavLink } from "react-router";
 import { useAuth } from "../../hooks/auth";
 import { useEffect, useState } from "react";
+import Cookies from 'js-cookie';
 
 export default function Navbar({ setSidebar }) {
   const { isUiLoading } = useAuth()
@@ -13,6 +14,7 @@ export default function Navbar({ setSidebar }) {
     setData(JSON.parse(localStorage.getItem('loggedInUser')) || { imagePath: '' });
   }, [])
   const logout = () => {
+    Cookies.remove('auth_token');
     localStorage.clear()
   }
   return (

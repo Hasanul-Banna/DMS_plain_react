@@ -1,13 +1,14 @@
+import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import { AuthContext } from '../hooks/auth';
 
 
 // Create a provider component
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(Cookies.get('auth_token'));
   const [isUiLoading, setUiLoader] = useState(false)
   useEffect(() => {
-    setIsAuthenticated(!!JSON.parse(localStorage.getItem('loggedInUser')));
+    setIsAuthenticated(Cookies.get('auth_token'));
   }, [])
   return (
     <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, isUiLoading, setUiLoader }}>
